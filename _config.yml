@@ -8,7 +8,7 @@ subtitle: ''
 description: ''
 keywords:
 author: Artibix
-language: zh
+language: zh-CN
 timezone: 'Asia/Shanghai'
 
 # URL
@@ -104,4 +104,4 @@ deploy:
   type: 'git'
   repo: git@github.com:artibix/artibix.github.io
   branch: gh-pages
-  message: "Site updated: {{ now('YYYY-MM-DD HH:mm:ss') }}"
+  message: "Site updated by hexo deploy"
