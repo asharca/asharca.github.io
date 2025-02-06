@@ -84,6 +84,7 @@ index_img:
 - BTW (By The Way): 顺便说一下
 - FYI (For Your Information): 供参考
 - DIY (Do It Yourself): 自己动手做
+- FWIW (For What It's Worth): 供参考；顺便说一下；不知道有没有帮助，但是...
 
 ### 商务沟通用语
 - ROI (Return On Investment): 投资回报率
