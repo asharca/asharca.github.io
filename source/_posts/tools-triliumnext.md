@@ -24,7 +24,7 @@ Trilium Notes 开源、跨平台的个人笔记管理软件，可以方便结构
 
 {% note danger %}
 请注意，本文只是介绍 Trilium 的优点和我查阅官方 Wiki 对它的理解，不涉及安装教程。
-因为 Trilium 已经进入维护阶段，版本停留在了 0.63，我使用的是 Triliumnext，官方仓库在这 https://github.com/TriliumNext/
+因为 Trilium 已经进入维护阶段，版本停留在了 0.63，我使用的是 Triliumnext，官方仓库在这 <https://github.com/TriliumNext/>
 相较原版，支持多语言，用 TS 重构，可自定义菜单栏。
 {% endnote %}
 
@@ -256,7 +256,6 @@ Trilium 提供的一种特殊类型的笔记，它允许你将笔记的内容渲
 
 官方编写的任务型脚本，用于管理 TODO，与日记集成，当添加 TODO 或者修改状态为 DONE 时，会自动把标题添加 TODO/DONE 前缀放在日记下。
 
-
 ## 总结
 
 Trilium 是一款功能全面、易于使用、扩展性强的笔记软件。入门可能会被大量的专业术语迷惑，但是作者的理念我认为很适合做笔记，所有笔记都是平级，通过属性、链接关联在一起。
@@ -273,6 +272,6 @@ Trilium 是一款功能全面、易于使用、扩展性强的笔记软件。入
 
 ## 参考
 
-https://triliumnext.github.io/Docs/Wiki/patterns-of-personal-knowledge
+<https://triliumnext.github.io/Docs/Wiki/patterns-of-personal-knowledge>
 
-https://triliumnext.github.io/Docs/
+<https://triliumnext.github.io/Docs/>

@@ -8,7 +8,7 @@ mermaid:
 index_img: ../img/cover_go_append.jpg
 ---
 
-func append (s [] T, vs ...T) [] T 的增长原理
+`func append (s [] T, vs ...T) [] T` 的增长原理
 
 <!-- more -->
 
@@ -24,24 +24,24 @@ package main
 import "fmt"
 
 func main () {
-	var s [] int
-	printSlice (s)
+ var s [] int
+ printSlice (s)
 
-	//append works on nil slices.
-	s = append (s, 0)
-	printSlice (s)
+ //append works on nil slices.
+ s = append (s, 0)
+ printSlice (s)
 
-	// The slice grows as needed.
-	s = append (s, 1)
-	printSlice (s)
+ // The slice grows as needed.
+ s = append (s, 1)
+ printSlice (s)
 
-	// We can add more than one element at a time.
-	s = append (s, 2, 3, 4)
-	printSlice (s)
+ // We can add more than one element at a time.
+ s = append (s, 2, 3, 4)
+ printSlice (s)
 }
 
 func printSlice (s [] int) {
-	fmt.Printf ("len=%d cap=%d %v\n", len (s), cap (s), s)
+ fmt.Printf ("len=%d cap=%d %v\n", len (s), cap (s), s)
 }
 
 //result:
@@ -53,10 +53,12 @@ func printSlice (s [] int) {
 
 我发现一个规律：
 
+```
 len=5 cap=6
 len=7 cap=8
 len=9 cap=10
 len=11 cap=12
+```
 
 在 0-5 容量内，len 和 cap 保持一致，在 len>5 对其进行扩容时，Go 似乎总是把 cap+2，然后我写了一段测试代码
 
@@ -66,18 +68,18 @@ package main
 import "fmt"
 
 func main () {
-	var nums [] int
-	fmt.Printf ("初始状态:\n %v, len=%d, cap=%d\n", nums, len (nums), cap (nums))
-	fmt.Println ("------------------------")
+ var nums [] int
+ fmt.Printf ("初始状态:\n %v, len=%d, cap=%d\n", nums, len (nums), cap (nums))
+ fmt.Println ("------------------------")
 
-	for i := 1; i <= 1000; i++ {
-		toAdd := make ([] int, 1)
+ for i := 1; i <= 1000; i++ {
+  toAdd := make ([] int, 1)
 
-		nums = append (nums, toAdd...)
-		fmt.Printf ("追加 %d 个元素 %v 后:\n", i, toAdd)
-		fmt.Printf ("len=%d, cap=%d\n", len (nums), cap (nums))
-		fmt.Println ("------------------------")
-	}
+  nums = append (nums, toAdd...)
+  fmt.Printf ("追加 %d 个元素 %v 后:\n", i, toAdd)
+  fmt.Printf ("len=%d, cap=%d\n", len (nums), cap (nums))
+  fmt.Println ("------------------------")
+ }
 }
 
 //result:
@@ -146,8 +148,8 @@ func main () {
 package main
 
 func main() {
-	var s []int
-	s = append(s, 0)
+ var s []int
+ s = append(s, 0)
 }
 ```
 
@@ -163,7 +165,6 @@ v13 (5) = StaticLECall <[]int,mem> {AuxCall{runtime.growslice}} [64] v5 v9 v7 v8
 
 重点看这行代码，append 实际上对应到了 `runtime.growslice`。
 
-
 ## growslice & nextslicecap
 
 接下来到官方源码目录下找到 `runtime.growslice`，位于 `src/runtime/slice.go` 文件中，函数体如下：
@@ -173,17 +174,17 @@ v13 (5) = StaticLECall <[]int,mem> {AuxCall{runtime.growslice}} [64] v5 v9 v7 v8
 //
 // arguments:
 //
-//	oldPtr = pointer to the slice's backing array
-//	newLen = new length (= oldLen + num)
-//	oldCap = original slice's capacity.
-//	   num = number of elements being added
-//	    et = element type
+// oldPtr = pointer to the slice's backing array
+// newLen = new length (= oldLen + num)
+// oldCap = original slice's capacity.
+//    num = number of elements being added
+//     et = element type
 //
 // return values:
 //
-//	newPtr = pointer to the new backing store
-//	newLen = same value as the argument
-//	newCap = capacity of the new backing store
+// newPtr = pointer to the new backing store
+// newLen = same value as the argument
+// newCap = capacity of the new backing store
 //
 // ......
 func growslice(oldPtr unsafe.Pointer, newLen, oldCap, num int, et *_type)
@@ -193,42 +194,42 @@ growslice 前面是一堆检查，后面是针对内存的优化处理，暂且�
 
 ```go
 func growslice(oldPtr unsafe.Pointer, newLen, oldCap, num int, et *_type)
-	... // 检查
-	newcap := nextslicecap(newLen, oldCap)
-	... // 分配内存
+ ... // 检查
+ newcap := nextslicecap(newLen, oldCap)
+ ... // 分配内存
 
 func nextslicecap(newLen, oldCap int) int {
-	newcap := oldCap
-	doublecap := newcap + newcap
-	if newLen > doublecap {
-		return newLen
-	}
+ newcap := oldCap
+ doublecap := newcap + newcap
+ if newLen > doublecap {
+  return newLen
+ }
 
-	const threshold = 256
-	if oldCap < threshold {
-		return doublecap
-	}
-	for {
-		// Transition from growing 2x for small slices
-		// to growing 1.25x for large slices. This formula
-		// gives a smooth-ish transition between the two.
-		newcap += (newcap + 3*threshold) >> 2
+ const threshold = 256
+ if oldCap < threshold {
+  return doublecap
+ }
+ for {
+  // Transition from growing 2x for small slices
+  // to growing 1.25x for large slices. This formula
+  // gives a smooth-ish transition between the two.
+  newcap += (newcap + 3*threshold) >> 2
 
-		// We need to check `newcap >= newLen` and whether `newcap` overflowed.
-		// newLen is guaranteed to be larger than zero, hence
-		// when newcap overflows then `uint(newcap) > uint(newLen)`.
-		// This allows to check for both with the same comparison.
-		if uint(newcap) >= uint(newLen) {
-			break
-		}
-	}
+  // We need to check `newcap >= newLen` and whether `newcap` overflowed.
+  // newLen is guaranteed to be larger than zero, hence
+  // when newcap overflows then `uint(newcap) > uint(newLen)`.
+  // This allows to check for both with the same comparison.
+  if uint(newcap) >= uint(newLen) {
+   break
+  }
+ }
 
-	// Set newcap to the requested cap when
-	// the newcap calculation overflowed.
-	if newcap <= 0 {
-		return newLen
-	}
-	return newcap
+ // Set newcap to the requested cap when
+ // the newcap calculation overflowed.
+ if newcap <= 0 {
+  return newLen
+ }
+ return newcap
 }
 ```
 
@@ -257,50 +258,50 @@ why？
 
 ```go
 func growslice(oldPtr unsafe.Pointer, newLen, oldCap, num int, et *_type) slice {
-	...
-	case et.Size_ == goarch.PtrSize:
-		lenmem = uintptr(oldLen) * goarch.PtrSize
-		newlenmem = uintptr(newLen) * goarch.PtrSize
-		capmem = roundupsize(uintptr(newcap)*goarch.PtrSize, noscan)
-		overflow = uintptr(newcap) > maxAlloc/goarch.PtrSize
-		newcap = int(capmem / goarch.PtrSize)
-	case isPowerOfTwo(et.Size_):
-		var shift uintptr
-		if goarch.PtrSize == 8 {
-			// Mask shift for better code generation.
-			shift = uintptr(sys.TrailingZeros64(uint64(et.Size_))) & 63
-		} else {
-			shift = uintptr(sys.TrailingZeros32(uint32(et.Size_))) & 31
-		}
-		lenmem = uintptr(oldLen) << shift
-		newlenmem = uintptr(newLen) << shift
-		capmem = roundupsize(uintptr(newcap)<<shift, noscan)
-		overflow = uintptr(newcap) > (maxAlloc >> shift)
-		newcap = int(capmem >> shift)
-		capmem = uintptr(newcap) << shift
-	...
+ ...
+ case et.Size_ == goarch.PtrSize:
+  lenmem = uintptr(oldLen) * goarch.PtrSize
+  newlenmem = uintptr(newLen) * goarch.PtrSize
+  capmem = roundupsize(uintptr(newcap)*goarch.PtrSize, noscan)
+  overflow = uintptr(newcap) > maxAlloc/goarch.PtrSize
+  newcap = int(capmem / goarch.PtrSize)
+ case isPowerOfTwo(et.Size_):
+  var shift uintptr
+  if goarch.PtrSize == 8 {
+   // Mask shift for better code generation.
+   shift = uintptr(sys.TrailingZeros64(uint64(et.Size_))) & 63
+  } else {
+   shift = uintptr(sys.TrailingZeros32(uint32(et.Size_))) & 31
+  }
+  lenmem = uintptr(oldLen) << shift
+  newlenmem = uintptr(newLen) << shift
+  capmem = roundupsize(uintptr(newcap)<<shift, noscan)
+  overflow = uintptr(newcap) > (maxAlloc >> shift)
+  newcap = int(capmem >> shift)
+  capmem = uintptr(newcap) << shift
+ ...
 }
 
 func roundupsize(size uintptr, noscan bool) (reqSize uintptr) {
-	reqSize = size
-	if reqSize <= maxSmallSize-mallocHeaderSize {
-		// Small object.
-		if !noscan && reqSize > minSizeForMallocHeader { // !noscan && !heapBitsInSpan(reqSize)
-			reqSize += mallocHeaderSize
-		}
-		// (reqSize - size) is either mallocHeaderSize or 0. We need to subtract mallocHeaderSize
-		// from the result if we have one, since mallocgc will add it back in.
-		if reqSize <= smallSizeMax-8 {
-			return uintptr(class_to_size[size_to_class8[divRoundUp(reqSize, smallSizeDiv)]]) - (reqSize - size)
-		}
-		return uintptr(class_to_size[size_to_class128[divRoundUp(reqSize-smallSizeMax, largeSizeDiv)]]) - (reqSize - size)
-	}
-	// Large object. Align reqSize up to the next page. Check for overflow.
-	reqSize += pageSize - 1
-	if reqSize < size {
-		return size
-	}
-	return reqSize &^ (pageSize - 1)
+ reqSize = size
+ if reqSize <= maxSmallSize-mallocHeaderSize {
+  // Small object.
+  if !noscan && reqSize > minSizeForMallocHeader { // !noscan && !heapBitsInSpan(reqSize)
+   reqSize += mallocHeaderSize
+  }
+  // (reqSize - size) is either mallocHeaderSize or 0. We need to subtract mallocHeaderSize
+  // from the result if we have one, since mallocgc will add it back in.
+  if reqSize <= smallSizeMax-8 {
+   return uintptr(class_to_size[size_to_class8[divRoundUp(reqSize, smallSizeDiv)]]) - (reqSize - size)
+  }
+  return uintptr(class_to_size[size_to_class128[divRoundUp(reqSize-smallSizeMax, largeSizeDiv)]]) - (reqSize - size)
+ }
+ // Large object. Align reqSize up to the next page. Check for overflow.
+ reqSize += pageSize - 1
+ if reqSize < size {
+  return size
+ }
+ return reqSize &^ (pageSize - 1)
 }
 ```
 
@@ -314,6 +315,7 @@ class_to_size[size_to_class8[divRoundUp(reqSize, smallSizeDiv)]]
 这样做的原因主要有下面几点：
 
 a) 内存规整：
+
 ```go
 // 不规整的分配
 make([]byte, 5)  -> 5字节
@@ -327,6 +329,7 @@ make([]byte, 7)  -> 8字节
 ```
 
 b) 内存复用：
+
 ```go
 // 示例场景
 s1 := make([]byte, 5)  // 分配8字节
@@ -335,6 +338,7 @@ s2 := make([]byte, 7)  // 分配8字节
 ```
 
 c) 缓存友好：
+
 ```go
 // 固定大小的内存块有利于内存缓存
 // 例如：所有8字节的块可以放在一起管理

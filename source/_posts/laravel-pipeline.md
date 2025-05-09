@@ -8,15 +8,15 @@ mermaid:
 index_img:
 ---
 
-在软件开发中，数据处理往往需要经过多个步骤。Laravel 框架提供的 Pipeline（管道）模式为这类需求提供了优雅的解决方案。本文将深入剖析 Pipeline 模式的工作原理及其在实际开发中的应用。
+在软件开发中，数据处理往往需要经过多个步骤。`Laravel` 框架提供的 Pipeline（管道）模式为这类需求提供了优雅的解决方案。本文将深入剖析 Pipeline 模式的工作原理及其在实际开发中的应用。
 
 <!-- more -->
 
 {% note primary %}
-Laravel: 11.x
+`Laravel`: 11.x
 PHP: 8.x
-code: vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php
-docs: https://laravel.com/docs/11.x/helpers#pipeline
+code: `vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php`
+docs: <https://laravel.com/docs/11.x/helpers#pipeline>
 {% endnote %}
 
 ## 理解 Pipeline 模式
@@ -24,8 +24,8 @@ docs: https://laravel.com/docs/11.x/helpers#pipeline
 要理解 Pipeline 模式，不妨想象一条工业生产线：产品从流水线的一端进入，依次经过不同的工作站，每个工作站都会对产品进行特定的处理。到达终点时，产品就完成了所有必要的加工步骤。Pipeline 模式就是这个概念在软件中的实现——数据像产品一样，流经一系列预设的处理环节，每个环节都可以对数据进行验证、转换或者其他必要的处理。
 
 ## Laravel Pipeline 的设计思路
-
-Laravel 的 Pipeline 实现主要包含以下核心要素：
+  
+`Laravel` 的 Pipeline 实现主要包含以下核心要素：
 
 1. Pipeline 主体类（`Illuminate\Pipeline\Pipeline`）
 2. 多个独立的处理管道
@@ -240,7 +240,8 @@ $result = $pipeline
     ->through([$pipe1, $pipe2, $pipe3])
     ->then($destination);
 ```
-- 以这段代码为例，通过 array_reduce+carry 包装成 $destination($pipe3($pipe2($pipe1($passable)))) 的形式去执行，注意 then 里面的 reverse，将 pipe1，pipe2，pipe3 逆序后再 reduce
+
+- 以这段代码为例，通过 array_reduce+carry 包装成 `$destination($pipe3($pipe2($pipe1($passable))))` 的形式去执行，注意 then 里面的 reverse，将 pipe1，pipe2，pipe3 逆序后再 reduce
 - carry 先返回一个闭包处理管道函数，在里面有内层闭包处理当前请求
 - carry 可以处理 callable，字符串（可以解析成对象），现成对象
 
@@ -267,6 +268,6 @@ Pipeline 模式特别适合以下场景：
 
 ## 总结
 
-Laravel 的 Pipeline 模式为我们提供了一个强大而优雅的数据处理方案。它不仅让代码结构更加清晰，还提供了极大的灵活性。无论是处理复杂的数据转换，实现中间件功能，还是管理业务流程，Pipeline 都是一个值得掌握的开发工具。
+`Laravel` 的 Pipeline 模式为我们提供了一个强大而优雅的数据处理方案。它不仅让代码结构更加清晰，还提供了极大的灵活性。无论是处理复杂的数据转换，实现中间件功能，还是管理业务流程，Pipeline 都是一个值得掌握的开发工具。
 
 通过合理使用 Pipeline 模式，我们可以将复杂的处理流程变得简单明了，同时保持代码的可维护性和可扩展性。这正是 Laravel 框架追求优雅开发体验的一个体现。

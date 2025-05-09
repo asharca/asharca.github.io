@@ -16,7 +16,7 @@ Laravel Collection 原理和用法解析。
 Laravel: 11.x
 PHP: 8.x
 code: vendor/laravel/framework/src/Illuminate/Collections/Collection.php
-docs: https://laravel.com/docs/11.x/collections
+docs: <https://laravel.com/docs/11.x/collections>
 {% endnote %}
 
 ## 介绍
@@ -133,7 +133,7 @@ $activeUsers = $users->filter->active;  // 简化的过滤语法
 ```
 
 {% note primary %}
-HigherOrderCollectionProxy 大致原理：Collection 本身没有 filter, map, reduce 属性（注意这里是属性，不是方法），通过 EnumeratesValues 的__get() 方法调用 HigherOrderCollectionProxy 并设置 method 为 filter/map 等等，然后返回 HigherOrderCollectionProxy，当链式调用属性 active 时会通过 HigherOrderCollectionProxy 的 __get 去使用代理的 method，返回 Collection 类，循环往复。
+HigherOrderCollectionProxy 大致原理：Collection 本身没有 filter, map, reduce 属性（注意这里是属性，不是方法），通过 EnumeratesValues 的__get() 方法调用 HigherOrderCollectionProxy 并设置 method 为 filter/map 等等，然后返回 HigherOrderCollectionProxy，当链式调用属性 active 时会通过 HigherOrderCollectionProxy 的__get 去使用代理的 method，返回 Collection 类，循环往复。
 {% endnote %}
 
 ### Macroable
@@ -174,7 +174,6 @@ $collection = collect(['hello', 'world'])->capitalize();
 - 迭代器模式：使用 PHP 迭代器延迟计算
 - 惰性求值：只在真正需要时计算
 - 流式处理：一次处理一个元素
-
 
 ```php
 $lazyCollection = collect([1, 2, 3, 4, 5])

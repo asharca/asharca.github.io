@@ -17,16 +17,18 @@ Linux 除了 rwx 权限之外，还有哪些权限呢？
 在开始介绍之前，先解释下为什么我会思考这个问题。
 
 我写了一个 Golang 创建 ICMP 监听，代码如下：
+
 ```go
 func (p *Pinger) connect() error {
-	conn, err := icmp.ListenPacket("ip4:icmp", "0.0.0.0")
-	if err != nil {
-		return fmt.Errorf("error creating ICMP connection: %v", err)
-	}
-	p.conn = conn
-	return nil
+ conn, err := icmp.ListenPacket("ip4:icmp", "0.0.0.0")
+ if err != nil {
+  return fmt.Errorf("error creating ICMP connection: %v", err)
+ }
+ p.conn = conn
+ return nil
 }
 ```
+
 使用非 root 权限的用户运行时报错：error creating ICMP connection: listen ip4:icmp 0.0.0.0: socket: operation not permitted
 
 这串代码其实是我在模拟 ping 的实现，在 Linux 里面，普通用户使用 ping 不会报错，为什么使用我的程序就会报错呢？查资料了解到 Linux 权限控制系统除了 rwx 之外，还存在一个 capabilities。
@@ -43,6 +45,7 @@ drwxr-xr-x 8 artibix artibix 4096 Oct 14 18:22 github/
 drwxr-xr-x 3 artibix artibix 4096 Oct 26 19:09 project/
 drwxr-xr-x 4 artibix artibix 4096 Nov 11 09:46 tmp/
 ```
+
 - 第一个字母代表文件类型：文件类型(-)、目录(d)、符号链接(l)、块设备(b)、字符设备(c)、管道(p)、套接字(s)
 - 权限分为三组：用户(u)、组(g)、其他(o)
 - 每组包含读(r=4)、写(w=2)、执行(x=1)权限
@@ -175,6 +178,7 @@ SELinux（Security-Enhanced Linux）是由美国国家安全局（NSA）开发�
 ```text
 user:role:type
 ```
+
 - **User（用户）**：SELinux 的安全用户（如 `system_u`、`user_u`）。
 - **Role（角色）**：控制用户可以使用哪些类型的权限（如 `system_r`）。
 - **Type（类型）**：核心部分，用于定义资源和进程的访问规则（如 `httpd_t` 或 `httpd_sys_content_t`）。
@@ -182,10 +186,12 @@ user:role:type
 ### 策略（Policy）
 
 SELinux 的策略是访问控制规则的集合，定义了哪些操作被允许。例如：
+
 - 哪些进程可以访问哪些文件。
 - 哪些网络端口可以被绑定。
 
 常见策略包括：
+
 - **目标化（Targeted）**：保护指定的系统服务（默认策略，限制系统中关键进程）。
 - **最小化（Minimal）**：只有最少的控制。
 - **严格（Strict）**：对系统中的所有进程和对象实施全面控制。
@@ -193,23 +199,30 @@ SELinux 的策略是访问控制规则的集合，定义了哪些操作被允许
 ### 模式（Modes）
 
 SELinux 有三种运行模式：
+
 - **Enforcing**（强制模式）：严格执行 SELinux 策略，拒绝不符合规则的访问。
 - **Permissive**（宽容模式）：记录违规访问，但不实际阻止，用于调试和策略调整。
 - **Disabled**（禁用模式）：完全关闭 SELinux 功能。
 
 可以通过以下命令查看当前模式：
+
 ```bash
 getenforce
 ```
+
 更改模式：
+
 ```bash
 sudo setenforce 0  # 切换到 Permissive
 sudo setenforce 1  # 切换到 Enforcing
 ```
 
 ### 布尔值（Booleans）
+
 SELinux 中的布尔值允许管理员动态调整策略的行为，而无需修改策略文件。例如：
+
 - 允许或禁止 `httpd` 访问网络：
+
   ```bash
   sudo setsebool -P httpd_can_network_connect on
   ```
@@ -219,14 +232,19 @@ SELinux 中的布尔值允许管理员动态调整策略的行为，而无需修
 1. **标签化（Labeling）**
    SELinux 为系统中所有对象分配安全上下文标签（Label），包括：
    - 文件：通过 `ls -Z` 查看：
+
      ```bash
      ls -Z /var/www/html/
      ```
+
      输出示例：
+
      ```
      drwxr-xr-x. root root system_u:object_r:httpd_sys_content_t:s0 index.html
      ```
+
    - 进程：通过 `ps -Z` 查看：
+
      ```bash
      ps -Z | grep httpd
      ```
@@ -237,6 +255,8 @@ SELinux 中的布尔值允许管理员动态调整策略的行为，而无需修
 
 3. **日志记录**
    - 所有被拒绝的操作都会记录到 `/var/log/audit/audit.log` 文件中，可以通过工具解析：
+
      ```bash
      ausearch -m avc
      ```
+
