@@ -3,17 +3,17 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Artibix's Blogs
+title: Ashark's Blogs
 subtitle: ''
 description: ''
 keywords:
-author: Artibix
+author: Ashark
 language: zh-CN
 timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://artibix.github.io
+url: https://asharca.github.io
 permalink: :title/
 permalink_defaults:
 pretty_urls:
@@ -102,6 +102,6 @@ theme: fluid
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: 'git'
-  repo: git@github.com:artibix/artibix.github.io
+  repo: git@github.com:ashraca/asharca.github.io
   branch: gh-pages
   message: "Site updated by hexo deploy"

@@ -8,6 +8,22 @@ mermaid:
 index_img: ../img/cover-linux-permissions.jpg
 ---
 
+<!--toc:start-->
+- [Why](#why)
+- [传统的权限控制(UGO)](#传统的权限控制ugo)
+- [特殊权限位(Special Permissions)](#特殊权限位special-permissions)
+- [Capabilities](#capabilities)
+  - [capabilities](#capabilities)
+  - [Capability sets](#capability-sets)
+- [SELinux](#selinux)
+  - [强制访问控制 MAC](#强制访问控制-mac)
+  - [安全上下文（Security Context）](#安全上下文security-context)
+  - [策略（Policy）](#策略policy)
+  - [模式（Modes）](#模式modes)
+  - [布尔值（Booleans）](#布尔值booleans)
+  - [工作机制](#工作机制)
+<!--toc:end-->
+
 Linux 除了 rwx 权限之外，还有哪些权限呢？
 
 <!-- more -->
@@ -40,10 +56,10 @@ func (p *Pinger) connect() error {
 ```BASH
 ➜ ~ ls -l
 total 16
-drwxr-xr-x 3 artibix artibix 4096 Nov 10 16:35 code/
-drwxr-xr-x 8 artibix artibix 4096 Oct 14 18:22 github/
-drwxr-xr-x 3 artibix artibix 4096 Oct 26 19:09 project/
-drwxr-xr-x 4 artibix artibix 4096 Nov 11 09:46 tmp/
+drwxr-xr-x 3 ashark ashark 4096 Nov 10 16:35 code/
+drwxr-xr-x 8 ashark ashark 4096 Oct 14 18:22 github/
+drwxr-xr-x 3 ashark ashark 4096 Oct 26 19:09 project/
+drwxr-xr-x 4 ashark ashark 4096 Nov 11 09:46 tmp/
 ```
 
 - 第一个字母代表文件类型：文件类型(-)、目录(d)、符号链接(l)、块设备(b)、字符设备(c)、管道(p)、套接字(s)
@@ -259,4 +275,3 @@ SELinux 中的布尔值允许管理员动态调整策略的行为，而无需修
      ```bash
      ausearch -m avc
      ```
-
