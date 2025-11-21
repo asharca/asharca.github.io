@@ -97,6 +97,8 @@ ignore:
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 theme: fluid
+#https://github.com/chenzhutian/hexo-all-minifier
+all_minifier: true
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
@@ -105,3 +107,4 @@ deploy:
   repo: git@github.com:ashraca/asharca.github.io
   branch: gh-pages
   message: "Site updated by hexo deploy"
+
