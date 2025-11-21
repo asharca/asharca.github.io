@@ -8,22 +8,6 @@ mermaid:
 index_img: ../img/cover-linux-permissions.jpg
 ---
 
-<!--toc:start-->
-- [Why](#why)
-- [传统的权限控制(UGO)](#传统的权限控制ugo)
-- [特殊权限位(Special Permissions)](#特殊权限位special-permissions)
-- [Capabilities](#capabilities)
-  - [capabilities](#capabilities)
-  - [Capability sets](#capability-sets)
-- [SELinux](#selinux)
-  - [强制访问控制 MAC](#强制访问控制-mac)
-  - [安全上下文（Security Context）](#安全上下文security-context)
-  - [策略（Policy）](#策略policy)
-  - [模式（Modes）](#模式modes)
-  - [布尔值（Booleans）](#布尔值booleans)
-  - [工作机制](#工作机制)
-<!--toc:end-->
-
 Linux 除了 rwx 权限之外，还有哪些权限呢？
 
 <!-- more -->
