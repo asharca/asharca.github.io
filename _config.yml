@@ -99,6 +99,9 @@ ignore:
 theme: fluid
 #https://github.com/chenzhutian/hexo-all-minifier
 all_minifier: true
+github_edit:
+  enable: true
+  url: https://github.com/asharca/asharca.github.io/edit/main/source/
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
