@@ -103,11 +103,5 @@ github_edit:
   enable: true
   url: https://github.com/asharca/asharca.github.io/edit/main/source/
 
-# Deployment
-## Docs: https://hexo.io/docs/one-command-deployment
-deploy:
-  type: 'git'
-  repo: git@github.com:ashraca/asharca.github.io
-  branch: gh-pages
-  message: "Site updated by hexo deploy"
+# Deployment is handled by .github/workflows/static.yml (push main -> build -> gh-pages).
 

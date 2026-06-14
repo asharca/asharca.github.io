@@ -39,18 +39,16 @@ hexo.extend.filter.register('before_post_render', data => {
   const flush = () => {
     if (!inBlock || !type || !config[type]) return;
     const { cls, title, icon } = config[type];
-    const content = buffer
-      .map(l => l.replace(/^>\s?/, '').trim())
-      .filter(Boolean)
-      .join(' ');
-    result.push(`
-<div class="note note-${cls}">
-  <div style="display:flex;align-items:center;margin-bottom:8px">
-    <svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16" style="margin-right:6px;flex-shrink:0"><path d="${icon}"/></svg>
-    <strong>${title}</strong>
-  </div>
-  <div>${content}</div>
-</div>`);
+    const body = buffer.map(l => l.replace(/^>\s?/, ''));
+    // Emit wrapper + header as HTML, but keep the body on its own blank-line
+    // separated lines so the markdown renderer still processes it. Joining into
+    // raw text inside the div made bold/links/code/lists render as literal text.
+    result.push(`<div class="note note-${cls}">`);
+    result.push(`<div class="note-head"><svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="${icon}"/></svg><strong>${title}</strong></div>`);
+    result.push('');
+    result.push(...body);
+    result.push('');
+    result.push('</div>');
     buffer = [];
     inBlock = false;
     type = '';
