@@ -1,12 +1,19 @@
 ---
 title: 本地部署大模型完全指南：从 Ollama 到 vLLM
+category:
+  - 人工智能
+tags:
+  - LLM
+  - 大模型
+  - Ollama
+  - vLLM
+  - llama.cpp
 date: 2026-06-15 15:10:00
 updated:
-category: [人工智能]
-tags: [LLM, 大模型, Ollama, vLLM, llama.cpp]
 mermaid:
 index_img:
 ---
+
 
 把大模型跑在自己机器上，好处是隐私、离线、零 API 成本、可深度定制。难点在于：选哪个工具、需要什么硬件、怎么量化、怎么接入应用。本文从硬件账算起，对比主流部署方案，并给出 Ollama / llama.cpp / vLLM 三条由易到难的完整路径。
 

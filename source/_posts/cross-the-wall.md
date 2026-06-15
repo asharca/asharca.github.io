@@ -1,12 +1,19 @@
 ---
 title: 科学上网跨平台详解：iOS / Android / Windows / macOS / Linux
+category:
+  - 网络
+tags:
+  - 科学上网
+  - 代理
+  - Clash
+  - sing-box
+  - VPN
 date: 2026-06-15 14:20:00
 updated:
-category: [网络]
-tags: [科学上网, 代理, Clash, sing-box, VPN]
 mermaid:
 index_img:
 ---
+
 
 科学上网的本质是「把流量加密后转发给一台在墙外的服务器」。协议、客户端、平台三者排列组合让新手无从下手。本文从原理讲起，对比 Windows / macOS / Linux / Android / iOS 五大平台的主流客户端，并给出自建节点的完整流程。
 
