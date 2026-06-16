@@ -1,5 +1,5 @@
 ---
-title: 旁路由上的 hysteria2 两个坑:tproxy 如何吃掉服务端的回包与出站（深入 Linux 网络原理）
+title: 透明代理与 hysteria2 同机踩坑记
 category:
   - 网络
 tags:
@@ -85,19 +85,21 @@ lo     In   10.0.0.13.28585 > <client>.17840: UDP, length 688
 一个包进出内核会经过几个固定的「钩子点」，nftables/iptables 就挂在这些点上做手脚：
 
 ```text
-                              ┌─────────────┐
-   网卡收包 → prerouting → 路由判定 →│ 本机？ │
-                                      └──┬───┬──┘
-                                  是 │   │ 否（转发）
-                                     ▼   ▼
-                                  input  forward
-                                     │   │
-                                  本机进程   │
-                                     │   │
-                                  output   │
-                                     └─┬─┘
-                                       ▼
-                                  postrouting → 网卡发包
+  NIC rx ──► prerouting ──► [ routing decision ]
+                                   │
+                   ┌───────────────┴───────────────┐
+              for this host                     to forward
+                   │                                 │
+                 input                               │
+                   │                                 │
+             local process                           │
+                   │                                 │
+                 output                              │
+          (replies & egress start here)              │
+                   │                                 │
+                   └───────────────┬─────────────────┘
+                                   ▼
+                             postrouting ──► NIC tx
 ```
 
 - **prerouting**：所有「进来的」包（含要转发的）第一个经过的点。透明代理拦截**转发流量**就在这里。
@@ -162,12 +164,12 @@ table inet mihomo_tproxy_local {
 
 ```mermaid
 flowchart LR
-  C[外部客户端] -->|① udp 28586| R[MikroTik 网关]
-  R -->|② DNAT → 10.0.0.13:28585| B[sing-box hy2]
-  B -->|③ 回包 src 28585<br/>目的=公网| M{output: 打 mark 0x1}
-  M -->|④ ip rule 100 → 表 100| L[local default dev lo]
-  L -->|⑤ 回环上被 tproxy 收走| MH[mihomo :7895]
-  MH -.->|原 QUIC 回包丢失,握手失败| X((连不上))
+  C["external client"] -->|udp 28586| R["MikroTik gateway"]
+  R -->|DNAT to 28585| B["sing-box hy2"]
+  B -->|reply to public IP| M["output sets mark 0x1"]
+  M -->|ip rule hits table 100| L["reroute to dev lo"]
+  L -->|swallowed by tproxy| MH["mihomo 7895"]
+  MH -.->|QUIC reply lost| X(("connect fails"))
 ```
 
 这也解释了「**回环测试能通、外部就不行**」：回环回包目的地是 `127.0.0.1`，正好被第 ② 条**私网放行**豁免，根本不会被打标记。一个测试方法的盲区，差点把人带沟里。
