@@ -99,6 +99,11 @@ ignore:
 theme: fluid
 #https://github.com/chenzhutian/hexo-all-minifier
 all_minifier: true
+# 关闭图片压缩:mozjpeg 自带的 cjpeg 是 x86_64 二进制,在 Apple Silicon(arm64)
+# 上无 Rosetta 时会报 EBADARCH(errno -86)。HTML/CSS/JS 压缩保留。
+# 若想保留图片压缩,改为安装 Rosetta:softwareupdate --install-rosetta --agree-to-license
+image_minifier:
+  enable: false
 github_edit:
   enable: true
   url: https://github.com/asharca/asharca.github.io/edit/main/source/
